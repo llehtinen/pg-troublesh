@@ -99,6 +99,11 @@ See changes
 ./scripts/run_sql.sh "select pg_logical_slot_peek_changes('test_slot_1', <to_lsn|null>, <n of changes|null>)"
 ```
 
+Print some interesting LSNs, takes a while (3-5 mins for me).
+```shell
+./scripts/run_sql.sh "select pg_logical_slot_peek_changes('test_slot_1', null, null)" |grep -E ":1 data|00000 data|00001 data" |awk '{print $1 " " $2 " " $3 " " $4}'
+```
+
 Lines per WAL file?
 ```shell
 for f in `find ./pg_data/pg_wal/0*`; do wc -l $f; done
