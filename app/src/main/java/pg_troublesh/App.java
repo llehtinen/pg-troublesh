@@ -55,21 +55,22 @@ public class App {
         getCurrentLsn(), slot, getFlushedLsn(slot));
 
     lsofMonitor();
-    var stream = openStream(slot, startLsn);
 
-    log.info("Replication slot {} opened with starting LSN: {}",
-        slot, startLsn);
+    try {
+      var stream = openStream(slot, startLsn);
 
-    boolean msgReceived = false;
-    boolean beenWaiting = false;
-    long lastMsgReceived = 0;
-    long startTime = System.currentTimeMillis();
-    int msgsRead = 0;
+      log.info("Replication slot {} opened with starting LSN: {}",
+          slot, startLsn);
+
+      boolean msgReceived = false;
+      boolean beenWaiting = false;
+      long lastMsgReceived = 0;
+      long startTime = System.currentTimeMillis();
+      int msgsRead = 0;
 
 //    stream.setFlushedLSN(LogSequenceNumber.valueOf(startLsn));
 //    stream.forceUpdateStatus();
 
-    try {
       while (true) {
 
         ByteBuffer msg = stream.readPending();
@@ -215,6 +216,7 @@ public class App {
   @Data
   @JsonIgnoreProperties(ignoreUnknown = true)
   static class DockerService {
+
     String image;
     String command;
     Map<String, String> environment;
