@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS test_data (id SERIAL, data VARCHAR(255));
