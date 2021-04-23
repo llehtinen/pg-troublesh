@@ -1,9 +1,5 @@
 package pg_troublesh;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.util.concurrent.RateLimiter;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -15,12 +11,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.PGConnection;
@@ -38,7 +31,6 @@ public class App {
 
   @SneakyThrows
   public static void main(String[] args) {
-    parseDockerConfig();
     if (args.length < 2) {
       System.out.println("Two args required: slot_name and start_lsn [number of msgs to read]");
       System.exit(1);
@@ -149,7 +141,7 @@ public class App {
 
   @SneakyThrows
   static Connection getConnection() {
-    String port = dockerConfig.ports.get(0).split(":")[0];
+    String port = env.getProperty("DB_PORT");
     String url = String.format("jdbc:postgresql://localhost:%s/", port);
     Properties props = dbProps();
     return DriverManager.getConnection(url, props);
@@ -157,8 +149,8 @@ public class App {
 
   static Properties dbProps() {
     Properties props = new Properties();
-    PGProperty.USER.set(props, dockerConfig.environment.get("POSTGRES_USER"));
-    PGProperty.PASSWORD.set(props, dockerConfig.environment.get("POSTGRES_PASSWORD"));
+    PGProperty.USER.set(props, env.getProperty("DB_USER"));
+    PGProperty.PASSWORD.set(props, env.getProperty("DB_PASS"));
     PGProperty.ASSUME_MIN_SERVER_VERSION.set(props, "12.0");
     PGProperty.REPLICATION.set(props, "database");
     PGProperty.PREFER_QUERY_MODE.set(props, "simple");
@@ -202,27 +194,15 @@ public class App {
   }
 
   @SneakyThrows
-  private static DockerService parseDockerConfig() {
-    ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-    var map = objectMapper.readValue(new FileInputStream("docker-compose.yml"), JsonNode.class);
-    return objectMapper.treeToValue(map.get("services").get("postgres"), DockerService.class);
+  private static Properties parseEnv() {
+    Properties props = new Properties();
+    props.load(new FileInputStream(".env"));
+    return props;
   }
 
-  static DockerService dockerConfig = parseDockerConfig();
+  static Properties env = parseEnv();
   static Connection cxn = getConnection();
   static Connection replCxn = getConnection();
   static Process lsofMonitor = null;
-
-  @Data
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  static class DockerService {
-
-    String image;
-    String command;
-    Map<String, String> environment;
-    List<String> ports;
-    List<String> volumes;
-
-  }
 
 }

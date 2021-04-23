@@ -1,4 +1,6 @@
 # Setup
+Check values in `.env`, edit if necessary.
+
 Run setup script to prepare sql files in `init` folder:
 ```shell
 ./scripts/setup.sh
