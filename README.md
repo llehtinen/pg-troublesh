@@ -94,6 +94,29 @@ Restarting Docker helps:
 killall Docker && open /Applications/Docker.app
 ```
 
+See changes
+```shell
+./scripts/run_sql.sh "select pg_logical_slot_peek_changes('test_slot_1', <to_lsn|null>, <n of changes|null>)"
+```
+
+Lines per WAL file?
+```shell
+for f in `find ./pg_data/pg_wal/0*`; do wc -l $f; done
+  118958 ./pg_data/pg_wal/000000010000000000000001
+   54120 ./pg_data/pg_wal/000000010000000000000002
+   69950 ./pg_data/pg_wal/000000010000000000000003
+   90892 ./pg_data/pg_wal/000000010000000000000004
+  105003 ./pg_data/pg_wal/000000010000000000000005
+   51249 ./pg_data/pg_wal/000000010000000000000006
+   54376 ./pg_data/pg_wal/000000010000000000000007
+   78909 ./pg_data/pg_wal/000000010000000000000008
+   98281 ./pg_data/pg_wal/000000010000000000000009
+  176839 ./pg_data/pg_wal/00000001000000000000000A
+   90876 ./pg_data/pg_wal/00000001000000000000000B
+   91198 ./pg_data/pg_wal/00000001000000000000000C
+   19053 ./pg_data/pg_wal/00000001000000000000000D
+```
+
 WIP get cutoff LSNs
 ```
 ./scripts/waldump.sh 000000010000000000000001 00000001000000000000000D \
