@@ -6,7 +6,7 @@ Run setup script to prepare sql files in `init` folder:
 ./scripts/setup.sh
 ```
 
-Set up Postgres. Sql files in `init` folder will be executed. On my Macbook Pro, this takes about 5 minutes. 
+Set up Postgres. Sql files in `init` folder will be executed. On my Macbook Pro, this takes about 5 minutes. For status, see log file in `pg_logs` folder, or `docker-compose logs` (latter is very noisy due to inserts).
 ```shell
 docker-compose up -d
 ```
@@ -16,22 +16,23 @@ Build the Java app:
 ./gradlew build
 ```
 
-After init we have 13 WAL files:
-
+After init we have WAL files:
 ```
-./pg_data/pg_wal/000000010000000000000001
-./pg_data/pg_wal/000000010000000000000002
-./pg_data/pg_wal/000000010000000000000003
-./pg_data/pg_wal/000000010000000000000004
-./pg_data/pg_wal/000000010000000000000005
-./pg_data/pg_wal/000000010000000000000006
-./pg_data/pg_wal/000000010000000000000007
-./pg_data/pg_wal/000000010000000000000008
-./pg_data/pg_wal/000000010000000000000009
-./pg_data/pg_wal/00000001000000000000000A
-./pg_data/pg_wal/00000001000000000000000B
-./pg_data/pg_wal/00000001000000000000000C
-./pg_data/pg_wal/00000001000000000000000D
+pg_data/pg_wal/
+├── 000000010000000000000001
+├── 000000010000000000000002
+├── 000000010000000000000003
+├── 000000010000000000000004
+├── 000000010000000000000005
+├── 000000010000000000000006
+├── 000000010000000000000007
+├── 000000010000000000000008
+├── 000000010000000000000009
+├── 00000001000000000000000A
+├── 00000001000000000000000B
+├── 00000001000000000000000C
+├── 00000001000000000000000D
+└── archive_status
 ```
 
 We also have 4 replication slots at different points in WAL. Get the exact values from the database:
