@@ -1,5 +1,5 @@
 # Setup
-Run setup script to generate large amounts of inserts:
+Run setup script to prepare sql files in `init` folder:
 ```shell
 ./scripts/setup.sh
 ```
@@ -86,4 +86,15 @@ See `scripts/waldump.sh` for convenience:
 ```
 
 Re-initializing the database after wiping `pg_data` sometimes causes docker-compose to hang.
-Running `killall Docker && open /Applications/Docker.app` can help.
+Restarting Docker helps:
+```
+killall Docker && open /Applications/Docker.app
+```
+
+WIP get cutoff LSNs
+```
+./scripts/waldump.sh 000000010000000000000001 00000001000000000000000D \
+|./scripts/analyze_wal.awk \
+|sed 's/^ +//g' \
+|sed 's/,$//g'
+```
