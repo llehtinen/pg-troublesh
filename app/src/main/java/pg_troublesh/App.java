@@ -43,7 +43,9 @@ public class App {
     String slot = args[0];
     String startLsn = args[1];
 
-    log.info("DB current LSN: {}, {} flushed currently to: {}",
+    String dbVersion = getStringResult("SELECT version()");
+    log.info(dbVersion);
+    log.info("Current LSN: {}, {} flushed currently to: {}",
         getCurrentLsn(), slot, getFlushedLsn(slot));
 
     lsofMonitor();
