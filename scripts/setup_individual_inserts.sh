@@ -3,7 +3,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 INIT_DIR="$( cd "$DIR/../init" &> /dev/null && pwd)"
 
-# 1. Generate sql with 100k inserts
 echo "Generating sql file with 100k inserts"
 $DIR/inserts_gen.sh 1 100000 > $DIR/100k.sql
 
